@@ -1,6 +1,0 @@
-name = "patricksell"
-compatibility_date = "2024-04-01"
-
-[[r2_buckets]]
-binding = "MESSAGES"
-bucket_name = "psell-messages"
