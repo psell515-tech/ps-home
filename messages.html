@@ -3,23 +3,36 @@
 <head>
   <title>Messages</title>
   <style>
-    body { 
-      font-family: sans-serif; 
-      max-width: 600px; 
-      margin: 40px auto; 
+    body {
+      font-family: sans-serif;
+      max-width: 600px;
+      margin: 40px auto;
       line-height: 1.5;
     }
-    .msg { 
-      padding: 15px; 
-      border: 1px solid #ddd; 
-      margin-bottom: 15px; 
-      border-radius: 8px; 
+    .msg {
+      padding: 15px;
+      border: 1px solid #ddd;
+      margin-bottom: 15px;
+      border-radius: 8px;
       background: #fafafa;
+      transition: background 0.2s, color 0.2s;
     }
-    .date { 
-      font-size: 12px; 
-      color: #666; 
-      margin-bottom: 8px; 
+    .msg.highlight {
+      background: #ffe5e5;
+      color: #b30000;
+      font-weight: bold;
+    }
+    button {
+      margin-top: 10px;
+      padding: 6px 12px;
+      border: none;
+      background: #d33;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #b00;
     }
   </style>
 </head>
@@ -28,26 +41,55 @@
   <div id="messages">Loading…</div>
 
   <script>
-    fetch("/messages")
-      .then(r => r.json())
-      .then(list => {
-        const container = document.getElementById("messages");
-        container.innerHTML = "";
+    function loadMessages() {
+      fetch("/messages")
+        .then(r => r.json())
+        .then(list => {
+          const container = document.getElementById("messages");
+          container.innerHTML = "";
 
-        list.forEach(m => {
-          const div = document.createElement("div");
-          div.className = "msg";
-          div.innerHTML = `
-            <div class="date">${m.created_at}</div>
-            <strong>${m.name}</strong> (${m.email})<br><br>
-            ${m.message}
-          `;
-          container.appendChild(div);
+          list.forEach(m => {
+            const div = document.createElement("div");
+            div.className = "msg";
+
+            div.innerHTML = `
+              <div class="date">${m.created_at}</div>
+              <strong>${m.name}</strong> (${m.email})<br><br>
+              ${m.message}
+              <br><br>
+              <button data-key="${m._key}">Delete</button>
+            `;
+
+            // Highlight on click
+            div.addEventListener("click", () => {
+              div.classList.toggle("highlight");
+            });
+
+            // Delete button
+            div.querySelector("button").addEventListener("click", (e) => {
+              e.stopPropagation(); // prevent highlight toggle
+
+              const key = e.target.dataset.key;
+
+              fetch("/delete", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ key })
+              })
+              .then(r => r.json())
+              .then(res => {
+                if (res.ok) {
+                  div.remove();
+                }
+              });
+            });
+
+            container.appendChild(div);
+          });
         });
-      })
-      .catch(err => {
-        document.getElementById("messages").innerText = "Error loading messages.";
-      });
+    }
+
+    loadMessages();
   </script>
 </body>
 </html>
