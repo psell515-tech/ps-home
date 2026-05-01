@@ -4,33 +4,60 @@
   <title>Messages</title>
   <style>
     body {
-      font-family: sans-serif;
-      max-width: 600px;
+      font-family: system-ui, sans-serif;
+      max-width: 700px;
       margin: 40px auto;
-      line-height: 1.5;
+      padding: 0 20px;
+      background: #f7f7f7;
+      color: #222;
     }
+
+    h1 {
+      margin-bottom: 25px;
+      font-size: 28px;
+      font-weight: 600;
+    }
+
     .msg {
-      padding: 15px;
+      background: white;
+      padding: 18px 20px;
+      border-radius: 10px;
       border: 1px solid #ddd;
-      margin-bottom: 15px;
-      border-radius: 8px;
-      background: #fafafa;
-      transition: background 0.2s, color 0.2s;
+      margin-bottom: 18px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+      cursor: pointer;
     }
+
     .msg.highlight {
       background: #ffe5e5;
+      border-color: #cc0000;
       color: #b30000;
       font-weight: bold;
     }
+
+    .date {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 6px;
+    }
+
+    .meta {
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
     button {
-      margin-top: 10px;
+      margin-top: 12px;
       padding: 6px 12px;
-      border: none;
       background: #d33;
       color: white;
-      border-radius: 4px;
+      border: none;
+      border-radius: 5px;
       cursor: pointer;
+      font-size: 14px;
     }
+
     button:hover {
       background: #b00;
     }
@@ -54,9 +81,8 @@
 
             div.innerHTML = `
               <div class="date">${m.created_at}</div>
-              <strong>${m.name}</strong> (${m.email})<br><br>
-              ${m.message}
-              <br><br>
+              <div class="meta"><strong>${m.name}</strong> (${m.email})</div>
+              <div class="text">${m.message}</div>
               <button data-key="${m._key}">Delete</button>
             `;
 
