@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Gallery — Patrick Sell</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+  body {
+    margin: 0;
+    padding: 20px;
+    background: #000;
+    font-family: sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+  }
+
+  h1 {
+    margin-bottom: 20px;
+    font-weight: 300;
+    letter-spacing: 1px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+    width: 100%;
+    max-width: 900px;
+  }
+
+  .item {
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    background: #111;
+    cursor: pointer;
+  }
+
+  .item img,
+  .item video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  #viewer {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.9);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+  }
+
+  #viewer video,
+  #viewer img {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 12px;
+  }
+</style>
+</head>
+
+<body>
+
+<h1>Gallery</h1>
+
+<div class="grid" id="grid"></div>
+
+<div id="viewer"></div>
+
+<script>
+const WORKER = "https://hptombstone2work.psell515.workers.dev/";
+const TOKEN = "my_subway";
+const PREFIX = "";
+
+let media = [];
+let currentIndex = 0;
+let startX = 0;
+
+async function loadGallery() {
+  const listURL = `${WORKER}list?prefix=${encodeURIComponent(PREFIX)}&token=${TOKEN}`;
+  const raw = await fetch(listURL).then(r => r.json());
+
+  console.log("LIST RESPONSE:", raw);
+
+  // Auto-detect the array of filenames
+  let files = [];
+
+  if (Array.isArray(raw)) {
+    files = raw;
+  } else if (Array.isArray(raw.files)) {
+    files = raw.files;
+  } else if (Array.isArray(raw.objects)) {
+    files = raw.objects;
+  } else if (Array.isArray(raw.keys)) {
+    files = raw.keys;
+  } else {
+    console.error("Could not detect file list format");
+    return;
+  }
+
+  // Build full URLs
+  media = files.map(f =>
+    `${WORKER}r2/${encodeURIComponent(f)}?token=${TOKEN}`
+  );
+
+  const grid = document.getElementById("grid");
+
+  media.forEach((url, i) => {
+    const item = document.createElement("div");
+    item.className = "item";
+    item.onclick = () => openViewer(i);
+
+    if (url.endsWith(".mp4")) {
+      const v = document.createElement("video");
+      v.src = url;
+      v.muted = true;
+      v.loop = true;
+      v.playsInline = true;
+      item.appendChild(v);
+    } else {
+      const img = document.createElement("img");
+      img.src = url;
+      item.appendChild(img);
+    }
+
+    grid.appendChild(item);
+  });
+}
+
+function openViewer(index) {
+  currentIndex = index;
+  showMedia();
+  document.getElementById("viewer").style.display = "flex";
+}
+
+function closeViewer() {
+  const viewer = document.getElementById("viewer");
+  viewer.style.display = "none";
+  viewer.innerHTML = "";
+}
+
+function showMedia() {
+  const viewer = document.getElementById("viewer");
+  viewer.innerHTML = "";
+  const url = media[currentIndex];
+
+  if (url.endsWith(".mp4")) {
+    const v = document.createElement("video");
+    v.src = url;
+    v.controls = true;
+    v.autoplay = true;
+    viewer.appendChild(v);
+  } else {
+    const img = document.createElement("img");
+    img.src = url;
+    viewer.appendChild(img);
+  }
+}
+
+// Swipe navigation
+document.getElementById("viewer").addEventListener("touchstart", e => {
+  startX = e.touches[0].clientX;
+});
+
+document.getElementById("viewer").addEventListener("touchend", e => {
+  const endX = e.changedTouches[0].clientX;
+  const diff = endX - startX;
+
+  if (Math.abs(diff) > 50) {
+    if (diff < 0) {
+      currentIndex = (currentIndex + 1) % media.length;
+    } else {
+      currentIndex = (currentIndex - 1 + media.length) % media.length;
+    }
+    showMedia();
+  }
+});
+
+// Tap to close
+document.getElementById("viewer").addEventListener("click", closeViewer);
+
+loadGallery();
+</script>
+
+</body>
+</html>
