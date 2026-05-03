@@ -34,6 +34,26 @@ button {
 button:hover {
   transform: translateY(-3px) scale(1.03);
 }
+.message-card {
+  background: #fff;
+  padding: 16px;
+  margin: 12px 0;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.delete-btn {
+  background: #d9534f;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.delete-btn:hover {
+  background: #c9302c;
+}
 
 #success {
   margin-top: 10px;
