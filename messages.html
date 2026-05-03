@@ -1,30 +1,31 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Messages</title>
+  <title>Message Report</title>
   <style>
     body {
       font-family: system-ui, sans-serif;
-      max-width: 700px;
+      max-width: 900px;
       margin: 40px auto;
       padding: 0 20px;
-      background: #f7f7f7;
+      background: #f2f2f2;
       color: #222;
     }
 
     h1 {
-      margin-bottom: 25px;
-      font-size: 28px;
-      font-weight: 600;
+      margin-bottom: 30px;
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
     }
 
     .msg {
       background: white;
-      padding: 18px 20px;
-      border-radius: 10px;
+      padding: 22px 26px;
+      border-radius: 12px;
       border: 1px solid #ddd;
-      margin-bottom: 18px;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+      margin-bottom: 22px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
       transition: background 0.2s, color 0.2s, border-color 0.2s;
       cursor: pointer;
     }
@@ -36,24 +37,37 @@
       font-weight: bold;
     }
 
-    .date {
-      font-size: 12px;
-      color: #666;
-      margin-bottom: 6px;
-    }
-
-    .meta {
-      font-size: 14px;
+    .row {
       margin-bottom: 10px;
     }
 
-    button {
+    .label {
+      font-size: 12px;
+      font-weight: 700;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .value {
+      font-size: 16px;
+      margin-top: 2px;
+    }
+
+    .message-text {
       margin-top: 12px;
-      padding: 6px 12px;
+      font-size: 17px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+
+    button {
+      margin-top: 16px;
+      padding: 8px 14px;
       background: #d33;
       color: white;
       border: none;
-      border-radius: 5px;
+      border-radius: 6px;
       cursor: pointer;
       font-size: 14px;
     }
@@ -64,7 +78,7 @@
   </style>
 </head>
 <body>
-  <h1>Messages</h1>
+  <h1>Message Report</h1>
   <div id="messages">Loading…</div>
 
   <script>
@@ -80,9 +94,26 @@
             div.className = "msg";
 
             div.innerHTML = `
-              <div class="date">${m.created_at}</div>
-              <div class="meta"><strong>${m.name}</strong> (${m.email})</div>
-              <div class="text">${m.message}</div>
+              <div class="row">
+                <div class="label">Date</div>
+                <div class="value">${m.created_at}</div>
+              </div>
+
+              <div class="row">
+                <div class="label">Name</div>
+                <div class="value">${m.name}</div>
+              </div>
+
+              <div class="row">
+                <div class="label">Email</div>
+                <div class="value">${m.email}</div>
+              </div>
+
+              <div class="row">
+                <div class="label">Message</div>
+                <div class="message-text">${m.message}</div>
+              </div>
+
               <button data-key="${m._key}">Delete</button>
             `;
 
