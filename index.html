@@ -15,63 +15,60 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
-    height: 100vh;
     overflow-x: hidden;
   }
 
-  /* ------------------------------
-     TOP‑RIGHT SKILLS WIDGET
-  ------------------------------ */
-  #skills-widget {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    width: 260px;
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.15);
-    border-radius: 14px;
-    padding: 16px 18px;
-    color: #fff;
-    font-family: inherit;
+  /* ---------------------------------------
+     HEADER WITH SKILLS WIDGET
+  --------------------------------------- */
+  #header {
+    width: 100%;
+    background: rgba(255,255,255,0.06);
+    border-bottom: 1px solid rgba(255,255,255,0.12);
     backdrop-filter: blur(8px);
-    cursor: pointer;
-    transition: 0.3s ease;
-    z-index: 9999;
+    padding: 14px 20px;
+    box-sizing: border-box;
+    position: relative;
+    z-index: 10;
   }
 
-  #skills-widget:hover {
-    background: rgba(255,255,255,0.14);
-  }
-
-  #skills-title {
-    font-size: 18px;
+  #skills-toggle {
+    font-size: 17px;
     font-weight: 600;
-    margin-bottom: 10px;
+    cursor: pointer;
+    user-select: none;
+    color: #fff;
   }
 
-  #skills-list {
+  #skills-panel {
+    width: 100%;
+    background: rgba(255,255,255,0.04);
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+    backdrop-filter: blur(8px);
+    display: none;
+    padding: 14px 20px 20px;
+    box-sizing: border-box;
+  }
+
+  #skills-panel ul {
     margin: 0;
     padding: 0;
     list-style: none;
-    display: none;
-    max-height: 260px;
-    overflow-y: auto;
   }
 
-  #skills-list li {
+  #skills-panel li {
     padding: 6px 0;
     border-bottom: 1px solid rgba(255,255,255,0.1);
     font-size: 15px;
   }
 
-  #skills-list li:last-child {
+  #skills-panel li:last-child {
     border-bottom: none;
   }
 
-  /* ------------------------------
-     EXISTING PAGE STYLES
-  ------------------------------ */
+  /* ---------------------------------------
+     EXISTING PAGE CONTENT
+  --------------------------------------- */
   #player-wrapper {
     margin-top: 40px;
     display: flex;
@@ -119,17 +116,23 @@
 
 <body>
 
-<!-- ⭐ TOP‑RIGHT SKILLS WIDGET -->
-<div id="skills-widget">
-  <div id="skills-title">Skills & Strengths</div>
+<!-- ⭐ HEADER WITH SKILLS -->
+<div id="header">
+  <div id="skills-toggle">Skills & Strengths ▾</div>
+</div>
+
+<!-- ⭐ EXPANDING PANEL (pushes content down) -->
+<div id="skills-panel">
   <ul id="skills-list"></ul>
 </div>
 
 <script>
   const skills = [
     "Cloudflare Workers & R2 Architecture",
+    "Full‑stack Web Development",
     "Website Development & Deployment",
     "New Technologies & Emerging Tools",
+    "API Design & Automation",
     "Google Sites Custom Embeds",
     "Clean, Minimal UI/UX",
     "Debugging & Systems Thinking",
@@ -138,16 +141,19 @@
     "Video Editing & Media Production",
     "Marketing Intelligence & Analytics",
     "Creative Problem Solving",
-    "Political Analysis",
-    "API Design & Automation",
+    "Political Analysis"
   ];
 
   document.getElementById("skills-list").innerHTML =
     skills.map(s => `<li>${s}</li>`).join("");
 
-  document.getElementById("skills-widget").addEventListener("click", () => {
-    const list = document.getElementById("skills-list");
-    list.style.display = list.style.display === "block" ? "none" : "block";
+  const toggle = document.getElementById("skills-toggle");
+  const panel = document.getElementById("skills-panel");
+
+  toggle.addEventListener("click", () => {
+    const open = panel.style.display === "block";
+    panel.style.display = open ? "none" : "block";
+    toggle.innerHTML = open ? "Skills & Strengths ▾" : "Skills & Strengths ▴";
   });
 </script>
 
