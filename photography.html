@@ -102,14 +102,15 @@
     align-items: center;
   }
 
-  #mainVideo {
-    width: 272px;
-    height: 459px;
-    border-radius: 14px;
-    object-fit: cover;
-    background: #000;
-    box-shadow: 0 0 18px rgba(0,0,0,0.35);
-  }
+#mainVideo {
+  width: 272px;
+  height: 459px;
+  border-radius: 14px;
+  object-fit: contain;   /* ⭐ scales video to fit */
+  background: #000;      /* ⭐ clean letterbox/pillarbox */
+  box-shadow: 0 0 18px rgba(0,0,0,0.35);
+}
+
 
   #updateNotice {
     margin-top: 18px;
