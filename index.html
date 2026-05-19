@@ -19,7 +19,7 @@
   }
 
   /* ---------------------------------------
-     HEADER WITH SKILLS WIDGET
+     HEADER WITH NAV + SKILLS
   --------------------------------------- */
   #header {
     width: 100%;
@@ -30,27 +30,33 @@
     box-sizing: border-box;
     position: relative;
     z-index: 10;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
-/* NAV LINKS */
-#nav-left {
-  display: flex;
-  align-items: center;
-  gap: 22px;
-}
 
-.nav-link {
-  color: #fff;
-  font-size: 16px;
-  font-weight: 500;
-  text-decoration: none;
-  opacity: 0.85;
-  transition: opacity 0.2s ease;
-}
+  /* NAV LINKS */
+  #nav-left {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+  }
 
-.nav-link:hover {
-  opacity: 1;
-}
+  .nav-link {
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    text-decoration: none;
+    opacity: 0.85;
+    transition: opacity 0.2s ease;
+  }
 
+  .nav-link:hover {
+    opacity: 1;
+  }
+
+  /* SKILLS TOGGLE */
   #skills-toggle {
     font-size: 17px;
     font-weight: 600;
@@ -59,6 +65,7 @@
     color: #fff;
   }
 
+  /* SKILLS PANEL */
   #skills-panel {
     width: 100%;
     background: rgba(255,255,255,0.04);
@@ -135,7 +142,7 @@
 
 <body>
 
-<!-- ⭐ HEADER WITH SKILLS -->
+<!-- ⭐ HEADER -->
 <div id="header">
   <div id="nav-left">
     <a class="nav-link" href="/contact.html">Contact</a>
@@ -148,8 +155,7 @@
   </div>
 </div>
 
-
-<!-- ⭐ EXPANDING PANEL (pushes content down) -->
+<!-- ⭐ EXPANDING SKILLS PANEL -->
 <div id="skills-panel">
   <ul id="skills-list"></ul>
 </div>
