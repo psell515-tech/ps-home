@@ -6,11 +6,165 @@
 <title>Contact Patrick</title>
 
 <link rel="stylesheet" href="contact.css">
+
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    background: #000;
+    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden;
+  }
+
+  /* ---------------------------------------
+     HEADER WITH NAV + SKILLS
+  --------------------------------------- */
+  #header {
+    width: 100%;
+    background: rgba(255,255,255,0.06);
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+    backdrop-filter: blur(8px);
+    padding: 14px 20px;
+    box-sizing: border-box;
+    position: relative;
+    z-index: 10;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  /* NAV LINKS */
+  #nav-left {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+  }
+
+  .nav-link {
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    text-decoration: none;
+    opacity: 0.85;
+    transition: opacity 0.2s ease;
+  }
+
+  .nav-link:hover {
+    opacity: 1;
+  }
+
+  /* SKILLS TOGGLE */
+  #skills-toggle {
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+    color: #fff;
+  }
+
+  /* SKILLS PANEL */
+  #skills-panel {
+    width: 100%;
+    background: rgba(255,255,255,0.04);
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+    backdrop-filter: blur(8px);
+    display: none;
+    padding: 14px 20px 20px;
+    box-sizing: border-box;
+  }
+
+  #skills-panel ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  #skills-panel li {
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    font-size: 15px;
+  }
+
+  #skills-panel li:last-child {
+    border-bottom: none;
+  }
+
+  /* CONTACT PAGE CONTENT */
+  h2 {
+    font-weight: 400;
+    margin-top: 40px;
+    margin-bottom: 20px;
+  }
+
+  #form-wrapper {
+    margin-top: 10px;
+    width: 90%;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+</style>
 </head>
 
-<body style="background:#000; color:#fff; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin:0; padding:40px 0; display:flex; flex-direction:column; align-items:center;">
+<body>
 
-<h2 style="font-weight:400; margin-bottom:20px;">Contact</h2>
+<!-- ⭐ HEADER -->
+<div id="header">
+  <div id="nav-left">
+    <a class="nav-link" href="/contact.html">Contact</a>
+    <a class="nav-link" href="https://www.patricksell.com/family">Family</a>
+    <a class="nav-link" href="https://www.patricksell.com/photography">Photography</a>
+  </div>
+
+  <div id="nav-right">
+    <div id="skills-toggle">Skills & Strengths ▾</div>
+  </div>
+</div>
+
+<!-- ⭐ EXPANDING SKILLS PANEL -->
+<div id="skills-panel">
+  <ul id="skills-list"></ul>
+</div>
+
+<script>
+  const skills = [
+    "Cloudflare Workers & R2 Architecture",
+    "Full‑stack Web Development",
+    "Website Development & Deployment",
+    "New Technologies & Emerging Tools",
+    "API Design & Automation",
+    "Google Sites Custom Embeds",
+    "Clean, Minimal UI/UX",
+    "Debugging & Systems Thinking",
+    "Wiring & Hardware Setup",
+    "Drone Operation & Property Management",
+    "Video Editing & Media Production",
+    "Marketing Intelligence & Analytics",
+    "Creative Problem Solving",
+    "Political Analysis"
+  ];
+
+  document.getElementById("skills-list").innerHTML =
+    skills.map(s => `<li>${s}</li>`).join("");
+
+  const toggle = document.getElementById("skills-toggle");
+  const panel = document.getElementById("skills-panel");
+
+  toggle.addEventListener("click", () => {
+    const open = panel.style.display === "block";
+    panel.style.display = open ? "none" : "block";
+    toggle.innerHTML = open ? "Skills & Strengths ▾" : "Skills & Strengths ▴";
+  });
+</script>
+
+<!-- ⭐ CONTACT FORM -->
+<h2>Contact</h2>
 
 <div id="form-wrapper">
   <form id="contactForm">
