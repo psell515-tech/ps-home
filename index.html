@@ -31,6 +31,25 @@
     position: relative;
     z-index: 10;
   }
+/* NAV LINKS */
+#nav-left {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+.nav-link {
+  color: #fff;
+  font-size: 16px;
+  font-weight: 500;
+  text-decoration: none;
+  opacity: 0.85;
+  transition: opacity 0.2s ease;
+}
+
+.nav-link:hover {
+  opacity: 1;
+}
 
   #skills-toggle {
     font-size: 17px;
@@ -118,8 +137,17 @@
 
 <!-- ⭐ HEADER WITH SKILLS -->
 <div id="header">
-  <div id="skills-toggle">Skills & Strengths ▾</div>
+  <div id="nav-left">
+    <a class="nav-link" href="/contact.html">Contact</a>
+    <a class="nav-link" href="https://www.patricksell.com/family">Family</a>
+    <a class="nav-link" href="https://www.patricksell.com/photography">Photography</a>
+  </div>
+
+  <div id="nav-right">
+    <div id="skills-toggle">Skills & Strengths ▾</div>
+  </div>
 </div>
+
 
 <!-- ⭐ EXPANDING PANEL (pushes content down) -->
 <div id="skills-panel">
