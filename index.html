@@ -19,7 +19,7 @@
   }
 
   /* ---------------------------------------
-     HEADER WITH NAV + SKILLS
+     SHARED HEADER STYLES
   --------------------------------------- */
   #header {
     width: 100%;
@@ -36,7 +36,6 @@
     align-items: center;
   }
 
-  /* NAV LINKS */
   #nav-left {
     display: flex;
     align-items: center;
@@ -56,44 +55,8 @@
     opacity: 1;
   }
 
-  /* SKILLS TOGGLE */
-  #skills-toggle {
-    font-size: 17px;
-    font-weight: 600;
-    cursor: pointer;
-    user-select: none;
-    color: #fff;
-  }
-
-  /* SKILLS PANEL */
-  #skills-panel {
-    width: 100%;
-    background: rgba(255,255,255,0.04);
-    border-bottom: 1px solid rgba(255,255,255,0.12);
-    backdrop-filter: blur(8px);
-    display: none;
-    padding: 14px 20px 20px;
-    box-sizing: border-box;
-  }
-
-  #skills-panel ul {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  #skills-panel li {
-    padding: 6px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-    font-size: 15px;
-  }
-
-  #skills-panel li:last-child {
-    border-bottom: none;
-  }
-
   /* ---------------------------------------
-     EXISTING PAGE CONTENT
+     PAGE CONTENT
   --------------------------------------- */
   #player-wrapper {
     margin-top: 40px;
@@ -106,7 +69,7 @@
     width: 272px;
     height: 459px;
     border-radius: 14px;
-    object-fit: cover;
+    object-fit: contain; /* ⭐ scales video to fit */
     background: #000;
     box-shadow: 0 0 18px rgba(0,0,0,0.35);
   }
@@ -126,33 +89,27 @@
     margin-top: 40px;
     width: 90%;
     max-width: 420px;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
-
-  #form-wrapper a {
-    color: #888;
-    margin-top: 20px;
-    font-size: 14px;
     text-align: center;
+    color: #888;
+    font-size: 14px;
   }
 </style>
 </head>
 
 <body>
 
-<!-- ⭐ HEADER -->
-<div id="header">
-  <div id="nav-left">
-    <a class="nav-link" href="/contact.html">Contact</a>
-    <a class="nav-link" href="https://www.patricksell.com/family">Family</a>
-    <a class="nav-link" href="https://www.patricksell.com/photography">Photography</a>
-  </div>
-</div>
+<!-- ⭐ SHARED HEADER -->
+<div id="header-container"></div>
 
+<script>
+  fetch("/header.html")
+    .then(r => r.text())
+    .then(html => {
+      document.getElementById("header-container").innerHTML = html;
+    });
+</script>
 
-<!-- ⭐ EXISTING CONTENT -->
+<!-- ⭐ PAGE CONTENT -->
 <div id="player-wrapper">
   <video id="mainVideo" playsinline autoplay muted></video>
 
@@ -163,8 +120,7 @@
 </div>
 
 <div id="form-wrapper">
-
-    Check back soon.
+  Check back soon.
 </div>
 
 <script>
