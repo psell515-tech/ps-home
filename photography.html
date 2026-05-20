@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Patrick Sell - Studio, Photography</title>
+<title>Patrick Sell - Photography</title>
 
 <style>
   body {
@@ -110,7 +110,7 @@
   <video id="mainVideo" playsinline autoplay muted></video>
 
   <div id="updateNotice">
-    New photography updates are planned for <strong>Summer 2026</strong>.  
+    New photography updates are planned for <strong>Summer 2026</strong>.<br>
     Thank you for visiting.
   </div>
 </div>
@@ -122,31 +122,61 @@
 <script>
   const video = document.getElementById("mainVideo");
 
-  const CLIP_1 = "https://hptombstone2work.psell515.workers.dev/r2/eye_blink_still.mp4?token=my_subway";
-  const CLIP_2 = "https://hptombstone2work.psell515.workers.dev/r2/smile.mp4?token=my_subway";
+  async function loadVideos() {
+    try {
+      const res = await fetch(
+        "https://hptombstone2work.psell515.workers.dev/list?bucket=psell-studio&token=my_subway"
+      );
 
-  let state = 1;
+      const files = await res.json();
 
-  function playClip1() {
-    state = 1;
-    video.loop = false;
-    video.src = CLIP_1;
-    video.play();
+      // Filter to MP4s
+      let videos = files.filter(f => f.toLowerCase().endsWith(".mp4"));
+
+      if (videos.length === 0) {
+        console.warn("No videos found in psell-studio bucket.");
+        return;
+      }
+
+      const START_CLIP = "eye_blink.mp4";
+
+      // Remove start clip from list (if present)
+      videos = videos.filter(v => v !== START_CLIP);
+
+      // Shuffle remaining videos
+      for (let i = videos.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [videos[i], videos[j]] = [videos[j], videos[i]];
+      }
+
+      // Build full URLs (start clip first)
+      const urls = [
+        `https://hptombstone2work.psell515.workers.dev/r2/${START_CLIP}?bucket=psell-studio&token=my_subway`,
+        ...videos.map(
+          key =>
+            `https://hptombstone2work.psell515.workers.dev/r2/${key}?bucket=psell-studio&token=my_subway`
+        )
+      ];
+
+      let index = 0;
+
+      function playNext() {
+        video.src = urls[index];
+        video.play();
+        index = (index + 1) % urls.length;
+      }
+
+      video.addEventListener("ended", playNext);
+
+      // Start with eye_blink.mp4
+      playNext();
+
+    } catch (err) {
+      console.error("Error loading videos:", err);
+    }
   }
 
-  function playClip2() {
-    state = 2;
-    video.loop = false;
-    video.src = CLIP_2;
-    video.play();
-  }
-
-  playClip1();
-
-  video.addEventListener("ended", () => {
-    if (state === 1) playClip2();
-    else playClip1();
-  });
+  loadVideos();
 </script>
 
 </body>
