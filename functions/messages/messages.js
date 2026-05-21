@@ -11,7 +11,8 @@ export async function onRequestGet(context) {
       let json;
       try {
         json = JSON.parse(obj);
-      } catch {
+      } catch (err) {
+        console.error("Bad JSON in object:", item.key);
         continue;
       }
 
@@ -19,6 +20,7 @@ export async function onRequestGet(context) {
       messages.push(json);
     }
 
+    // newest first
     messages.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
     return new Response(JSON.stringify(messages), {
