@@ -9,14 +9,9 @@ export async function onRequestGet(context) {
 
       let json;
       try {
-        json = await obj.json();
+        json = JSON.parse(obj);   // <-- FIXED
       } catch {
         continue; // skip corrupted entries
-      }
-
-      // Skip empty or invalid objects
-      if (!json.name || !json.email || !json.message || !json.created_at) {
-        continue;
       }
 
       json._key = item.key;
