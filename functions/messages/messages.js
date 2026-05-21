@@ -6,7 +6,19 @@ export async function onRequestGet(context) {
     for (const item of list.objects) {
       const obj = await context.env.MESSAGES.get(item.key);
       if (!obj) continue;
-      const json = await obj.json();
+
+      let json;
+      try {
+        json = await obj.json();
+      } catch {
+        continue; // skip corrupted entries
+      }
+
+      // Skip empty or invalid objects
+      if (!json.name || !json.email || !json.message || !json.created_at) {
+        continue;
+      }
+
       json._key = item.key;
       messages.push(json);
     }
@@ -22,4 +34,3 @@ export async function onRequestGet(context) {
     return new Response("Error reading messages", { status: 500 });
   }
 }
-
