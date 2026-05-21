@@ -7,11 +7,12 @@ export async function onRequestGet(context) {
       const obj = await context.env.MESSAGES.get(item.key);
       if (!obj) continue;
 
+      // R2 returns a STRING, so parse it manually
       let json;
       try {
-        json = JSON.parse(obj);   // <-- FIXED
+        json = JSON.parse(obj);
       } catch {
-        continue; // skip corrupted entries
+        continue;
       }
 
       json._key = item.key;
@@ -26,6 +27,6 @@ export async function onRequestGet(context) {
 
   } catch (err) {
     console.error(err);
-    return new Response("Errror reading messages", { status: 500 });
+    return new Response("Error reading messages", { status: 500 });
   }
 }
