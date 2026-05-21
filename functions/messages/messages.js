@@ -26,6 +26,6 @@ export async function onRequestGet(context) {
 
   } catch (err) {
     console.error(err);
-    return new Response("Error reading messages", { status: 500 });
+    return new Response("Errror reading messages", { status: 500 });
   }
 }
