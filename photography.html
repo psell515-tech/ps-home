@@ -92,8 +92,8 @@
     .nav-link:hover { color: var(--white); }
     .nav-link:hover::after { width: 100%; }
 
-    /* ── FULLSCREEN VIDEO ── */
-    #video-bg {
+    /* ── FULLSCREEN MEDIA ── */
+    #media-bg {
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
@@ -104,11 +104,18 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      display: block;
+      display: none;
+    }
+
+    #mainImage {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
     }
 
     /* scanlines */
-    #video-bg::after {
+    #media-bg::after {
       content: '';
       position: absolute;
       inset: 0;
@@ -124,7 +131,7 @@
     }
 
     /* vignette */
-    #video-bg::before {
+    #media-bg::before {
       content: '';
       position: absolute;
       inset: 0;
@@ -203,9 +210,10 @@
       });
   </script>
 
-  <!-- FULLSCREEN VIDEO -->
-  <div id="video-bg">
+  <!-- FULLSCREEN MEDIA -->
+  <div id="media-bg">
     <video id="mainVideo" playsinline autoplay muted></video>
+    <img id="mainImage" alt="" />
   </div>
 
   <!-- OVERLAY -->
@@ -220,55 +228,95 @@
 
   <script>
     const video = document.getElementById("mainVideo");
+    const img = document.getElementById("mainImage");
     const counter = document.getElementById("clip-counter");
 
-    async function loadVideos() {
+    const IMAGE_DURATION = 2500;  // ms to show each image
+    const VIDEO_MIN_DURATION = 3000;  // ms minimum before advancing video
+
+    let mediaTimer = null;
+    let videoStartTime = null;
+
+    async function loadMedia() {
       try {
         const res = await fetch(
           "https://hptombstone2work.psell515.workers.dev/list?bucket=psell-studio&token=my_subway"
         );
         const files = await res.json();
 
-        let videos = files.filter(f => f.toLowerCase().endsWith(".mp4"));
-        if (videos.length === 0) {
-          console.warn("No videos found in psell-studio bucket.");
+        const isMedia = f => /\.(mp4|jpg|jpeg|png)$/i.test(f);
+        let media = files.filter(isMedia);
+
+        if (media.length === 0) {
+          console.warn("No media found in psell-studio bucket.");
           return;
         }
 
         const START_CLIP = "eye_blink.mp4";
-        videos = videos.filter(v => v !== START_CLIP);
+        media = media.filter(f => f !== START_CLIP);
 
         // Shuffle
-        for (let i = videos.length - 1; i > 0; i--) {
+        for (let i = media.length - 1; i > 0; i--) {
           const j = Math.floor(Math.random() * (i + 1));
-          [videos[i], videos[j]] = [videos[j], videos[i]];
+          [media[i], media[j]] = [media[j], media[i]];
         }
 
-        const urls = [
-          `https://hptombstone2work.psell515.workers.dev/r2/${START_CLIP}?bucket=psell-studio&token=my_subway`,
-          ...videos.map(key =>
-            `https://hptombstone2work.psell515.workers.dev/r2/${key}?bucket=psell-studio&token=my_subway`
-          )
+        const baseUrl = "https://hptombstone2work.psell515.workers.dev/r2";
+        const token = "bucket=psell-studio&token=my_subway";
+
+        const items = [
+          { file: START_CLIP, url: `${baseUrl}/${START_CLIP}?${token}` },
+          ...media.map(f => ({ file: f, url: `${baseUrl}/${f}?${token}` }))
         ];
 
         let index = 0;
 
-        function playNext() {
-          video.src = urls[index];
-          video.play();
-          counter.textContent = `${index + 1} / ${urls.length}`;
-          index = (index + 1) % urls.length;
+        function clearTimers() {
+          if (mediaTimer) { clearTimeout(mediaTimer); mediaTimer = null; }
         }
 
-        video.addEventListener("ended", playNext);
+        function playNext() {
+          clearTimers();
+
+          const item = items[index];
+          const isVideo = /\.mp4$/i.test(item.file);
+          counter.textContent = `${index + 1} / ${items.length}`;
+          index = (index + 1) % items.length;
+
+          if (isVideo) {
+            img.style.display = "none";
+            video.style.display = "block";
+            video.src = item.url;
+            video.play();
+            videoStartTime = Date.now();
+          } else {
+            video.pause();
+            video.style.display = "none";
+            img.style.display = "block";
+            img.src = item.url;
+            mediaTimer = setTimeout(playNext, IMAGE_DURATION);
+          }
+        }
+
+        // Video ended — respect minimum duration
+        video.addEventListener("ended", () => {
+          const elapsed = Date.now() - videoStartTime;
+          const remaining = VIDEO_MIN_DURATION - elapsed;
+          if (remaining > 0) {
+            mediaTimer = setTimeout(playNext, remaining);
+          } else {
+            playNext();
+          }
+        });
+
         playNext();
 
       } catch (err) {
-        console.error("Error loading videos:", err);
+        console.error("Error loading media:", err);
       }
     }
 
-    loadVideos();
+    loadMedia();
   </script>
 
 </body>
