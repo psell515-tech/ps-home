@@ -1,157 +1,237 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Patrick Sell</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Patrick Sell</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-<style>
-  body {
-    margin: 0;
-    padding: 0;
-    background: #000;
-    color: #fff;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    overflow-x: hidden;
-  }
+    :root {
+      --black: #000;
+      --white: #fff;
+      --dim: rgba(255,255,255,0.5);
+      --border: rgba(255,255,255,0.1);
+      --accent: #e8ff00;
+      --header-h: 56px;
+    }
 
-  /* ---------------------------------------
-     SHARED HEADER STYLES
-  --------------------------------------- */
-  #header {
-    width: 100%;
-    background: rgba(255,255,255,0.06);
-    border-bottom: 1px solid rgba(255,255,255,0.12);
-    backdrop-filter: blur(8px);
-    padding: 14px 20px;
-    box-sizing: border-box;
-    position: relative;
-    z-index: 10;
+    html, body {
+      background: var(--black);
+      color: var(--white);
+      min-height: 100vh;
+      font-family: 'DM Mono', monospace;
+      overflow-x: hidden;
+    }
 
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+    /* ── HEADER ── */
+    #header-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--header-h);
+      z-index: 100;
+    }
 
-  #nav-left {
-    display: flex;
-    align-items: center;
-    gap: 22px;
-  }
+    #header {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
 
-  .nav-link {
-    color: #fff;
-    font-size: 16px;
-    font-weight: 500;
-    text-decoration: none;
-    opacity: 0.85;
-    transition: opacity 0.2s ease;
-  }
+    #site-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      letter-spacing: 0.12em;
+      color: var(--white);
+      text-decoration: none;
+    }
 
-  .nav-link:hover {
-    opacity: 1;
-  }
+    #site-title span { color: var(--accent); }
 
-  /* ---------------------------------------
-     PAGE CONTENT
-  --------------------------------------- */
-  #player-wrapper {
-    margin-top: 40px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
+    #nav-left {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
 
-  #mainVideo {
-    width: 272px;
-    height: 459px;
-    border-radius: 14px;
-    object-fit: contain; /* ⭐ scales video to fit */
-    background: #000;
-    box-shadow: 0 0 18px rgba(0,0,0,0.35);
-  }
+    .nav-link {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--dim);
+      text-decoration: none;
+      transition: color 0.2s ease;
+      position: relative;
+    }
 
-  #updateNotice {
-    margin-top: 18px;
-    font-size: 14px;
-    letter-spacing: 0.4px;
-    color: rgba(255,255,255,0.65);
-    text-align: center;
-    font-weight: 300;
-    max-width: 280px;
-    line-height: 1.45;
-  }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: var(--accent);
+      transition: width 0.25s ease;
+    }
 
-  #form-wrapper {
-    margin-top: 40px;
-    width: 90%;
-    max-width: 420px;
-    text-align: center;
-    color: #888;
-    font-size: 14px;
-  }
-</style>
+    .nav-link:hover { color: var(--white); }
+    .nav-link:hover::after { width: 100%; }
+
+    /* ── PAGE ── */
+    #page {
+      padding-top: calc(var(--header-h) + 60px);
+      padding-bottom: 80px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* ── VIDEO ── */
+    #video-frame {
+      position: relative;
+      width: 272px;
+      height: 484px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.03),
+        0 40px 80px rgba(0,0,0,0.8),
+        0 0 120px rgba(232,255,0,0.03);
+      animation: fadeUp 0.8s ease both;
+    }
+
+    /* scanline overlay */
+    #video-frame::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(255,255,255,0.015) 2px,
+        rgba(255,255,255,0.015) 4px
+      );
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    #mainVideo {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: var(--black);
+      display: block;
+    }
+
+    /* ── NOTICE ── */
+    #updateNotice {
+      margin-top: 28px;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      color: var(--dim);
+      text-align: center;
+      max-width: 272px;
+      line-height: 1.7;
+      animation: fadeUp 0.8s 0.12s ease both;
+    }
+
+    #updateNotice strong {
+      color: var(--accent);
+      font-weight: 400;
+    }
+
+    /* ── CHECK BACK ── */
+    #check-back {
+      margin-top: 32px;
+      font-size: 10px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.2);
+      animation: fadeUp 0.8s 0.22s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 480px) {
+      #header { padding: 0 16px; }
+      #nav-left { gap: 18px; }
+      .nav-link { font-size: 10px; }
+    }
+  </style>
 </head>
-
 <body>
 
-<!-- ⭐ SHARED HEADER -->
-<div id="header-container"></div>
+  <!-- HEADER -->
+  <div id="header-container"></div>
+  <script>
+    fetch("/header.html")
+      .then(r => r.text())
+      .then(html => {
+        document.getElementById("header-container").innerHTML = html;
+      });
+  </script>
 
-<script>
-  fetch("/header.html")
-    .then(r => r.text())
-    .then(html => {
-      document.getElementById("header-container").innerHTML = html;
-    });
-</script>
-
-<!-- ⭐ PAGE CONTENT -->
-<div id="player-wrapper">
-  <video id="mainVideo" playsinline autoplay muted></video>
-
-  <div id="updateNotice">
-    New creative updates are planned for <strong>June 2026</strong>.  
-    Thank you for visiting.
+  <!-- PAGE -->
+  <div id="page">
+    <div id="video-frame">
+      <video id="mainVideo" playsinline autoplay muted></video>
+    </div>
+    <div id="updateNotice">
+      New creative updates are planned for <strong>June 2026</strong>.<br>
+      Thank you for visiting.
+    </div>
+    <div id="check-back">Check back soon</div>
   </div>
-</div>
 
-<div id="form-wrapper">
-  Check back soon.
-</div>
+  <script>
+    const video = document.getElementById("mainVideo");
+    const CLIP_1 = "https://hptombstone2work.psell515.workers.dev/r2/patandcroc-ai.mp4?token=my_subway";
+    const CLIP_2 = "https://hptombstone2work.psell515.workers.dev/r2/ps-title-sequence.mp4?token=my_subway";
+    let state = 1;
 
-<script>
-  const video = document.getElementById("mainVideo");
+    function playClip1() {
+      state = 1;
+      video.loop = false;
+      video.src = CLIP_1;
+      video.play();
+    }
 
-  const CLIP_1 = "https://hptombstone2work.psell515.workers.dev/r2/patandcroc-ai.mp4?token=my_subway";
-  const CLIP_2 = "https://hptombstone2work.psell515.workers.dev/r2/ps-title-sequence.mp4?token=my_subway";
+    function playClip2() {
+      state = 2;
+      video.loop = false;
+      video.src = CLIP_2;
+      video.play();
+    }
 
-  let state = 1;
-
-  function playClip1() {
-    state = 1;
-    video.loop = false;
-    video.src = CLIP_1;
-    video.play();
-  }
-
-  function playClip2() {
-    state = 2;
-    video.loop = false;
-    video.src = CLIP_2;
-    video.play();
-  }
-
-  playClip1();
-
-  video.addEventListener("ended", () => {
-    if (state === 1) playClip2();
-    else playClip1();
-  });
-</script>
+    playClip1();
+    video.addEventListener("ended", () => {
+      if (state === 1) playClip2();
+      else playClip1();
+    });
+  </script>
 
 </body>
 </html>
