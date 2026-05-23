@@ -1,182 +1,275 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Patrick Sell - Family Album</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Family — Patrick Sell</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-<style>
-  body {
-    margin: 0;
-    padding: 0;
-    background: #000;
-    color: #fff;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    overflow-x: hidden;
-  }
+    :root {
+      --black: #000;
+      --white: #fff;
+      --dim: rgba(255,255,255,0.5);
+      --border: rgba(255,255,255,0.1);
+      --accent: #e8ff00;
+      --header-h: 56px;
+    }
 
-  /* Shared header styles */
-  #header {
-    width: 100%;
-    background: rgba(255,255,255,0.06);
-    border-bottom: 1px solid rgba(255,255,255,0.12);
-    backdrop-filter: blur(8px);
-    padding: 14px 20px;
-    box-sizing: border-box;
-    position: relative;
-    z-index: 10;
+    html, body {
+      background: var(--black);
+      color: var(--white);
+      height: 100%;
+      min-height: 100vh;
+      font-family: 'DM Mono', monospace;
+      overflow: hidden;
+    }
 
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+    /* ── HEADER ── */
+    #header-container {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--header-h);
+      z-index: 100;
+    }
 
-  #nav-left {
-    display: flex;
-    align-items: center;
-    gap: 22px;
-  }
+    #header {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
 
-  .nav-link {
-    color: #fff;
-    font-size: 16px;
-    font-weight: 500;
-    text-decoration: none;
-    opacity: 0.85;
-    transition: opacity 0.2s ease;
-  }
+    #site-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      letter-spacing: 0.12em;
+      color: var(--white);
+      text-decoration: none;
+    }
 
-  .nav-link:hover {
-    opacity: 1;
-  }
+    #site-title span { color: var(--accent); }
 
-  /* Page content */
-  #player-wrapper {
-    margin-top: 40px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
+    #nav-left {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
 
-  #mainVideo {
-    width: 272px;
-    height: 459px;
-    border-radius: 14px;
-    object-fit: contain;
-    background: #000;
-    box-shadow: 0 0 18px rgba(0,0,0,0.35);
-  }
+    .nav-link {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--dim);
+      text-decoration: none;
+      transition: color 0.2s ease;
+      position: relative;
+    }
 
-  #updateNotice {
-    margin-top: 18px;
-    font-size: 14px;
-    letter-spacing: 0.4px;
-    color: rgba(255,255,255,0.65);
-    text-align: center;
-    font-weight: 300;
-    max-width: 280px;
-    line-height: 1.45;
-  }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -3px; left: 0;
+      width: 0; height: 1px;
+      background: var(--accent);
+      transition: width 0.25s ease;
+    }
 
-  #form-wrapper {
-    margin-top: 40px;
-    width: 90%;
-    max-width: 420px;
-    text-align: center;
-    color: #888;
-    font-size: 14px;
-  }
-</style>
+    .nav-link:hover { color: var(--white); }
+    .nav-link:hover::after { width: 100%; }
+
+    /* ── FULLSCREEN VIDEO ── */
+    #video-bg {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+    }
+
+    #mainVideo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* scanlines */
+    #video-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.08) 2px,
+        rgba(0,0,0,0.08) 4px
+      );
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* vignette */
+    #video-bg::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.75) 100%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* ── OVERLAY ── */
+    #overlay {
+      position: fixed;
+      bottom: 40px;
+      left: 0; right: 0;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      animation: fadeUp 1s 0.3s ease both;
+    }
+
+    #updateNotice {
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: rgba(255,255,255,0.55);
+      text-align: center;
+      line-height: 1.7;
+    }
+
+    #updateNotice strong {
+      color: var(--accent);
+      font-weight: 400;
+    }
+
+    #check-back {
+      font-size: 10px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.2);
+    }
+
+    /* ── CLIP COUNTER ── */
+    #clip-counter {
+      position: fixed;
+      bottom: 40px;
+      right: 28px;
+      z-index: 10;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: rgba(255,255,255,0.18);
+      animation: fadeUp 1s 0.4s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 480px) {
+      #header { padding: 0 16px; }
+      #nav-left { gap: 18px; }
+      .nav-link { font-size: 10px; }
+      #clip-counter { display: none; }
+    }
+  </style>
 </head>
-
 <body>
 
-<!-- ⭐ SHARED HEADER -->
-<div id="header-container"></div>
+  <!-- HEADER -->
+  <div id="header-container"></div>
+  <script>
+    fetch("/header.html")
+      .then(r => r.text())
+      .then(html => {
+        document.getElementById("header-container").innerHTML = html;
+      });
+  </script>
 
-<script>
-  fetch("/header.html")
-    .then(r => r.text())
-    .then(html => {
-      document.getElementById("header-container").innerHTML = html;
-    });
-</script>
-
-<!-- ⭐ FAMILY PAGE CONTENT -->
-<div id="player-wrapper">
-  <video id="mainVideo" playsinline autoplay muted></video>
-
-  <div id="updateNotice">
-    New family updates are planned for <strong>Summer 2026</strong>.
+  <!-- FULLSCREEN VIDEO -->
+  <div id="video-bg">
+    <video id="mainVideo" playsinline autoplay muted></video>
   </div>
-</div>
 
-<div id="form-wrapper">
-Check Back Soon.
-</div>
+  <!-- OVERLAY -->
+  <div id="overlay">
+    <div id="updateNotice">
+      New family updates are planned for <strong>Summer 2026</strong>.
+    </div>
+    <div id="check-back">Check back soon</div>
+  </div>
 
-<script>
-  const video = document.getElementById("mainVideo");
+  <div id="clip-counter"></div>
 
-  async function loadVideos() {
-    try {
-      const res = await fetch(
-        "https://hptombstone2work.psell515.workers.dev/list?bucket=psell-family&token=my_subway"
-      );
+  <script>
+    const video = document.getElementById("mainVideo");
+    const counter = document.getElementById("clip-counter");
 
-      const files = await res.json();
+    async function loadVideos() {
+      try {
+        const res = await fetch(
+          "https://hptombstone2work.psell515.workers.dev/list?bucket=psell-family&token=my_subway"
+        );
+        const files = await res.json();
 
-      // Filter to MP4s
-      let videos = files.filter(f => f.toLowerCase().endsWith(".mp4"));
+        let videos = files.filter(f => f.toLowerCase().endsWith(".mp4"));
+        if (videos.length === 0) {
+          console.warn("No videos found in psell-family bucket.");
+          return;
+        }
 
-      if (videos.length === 0) {
-        console.warn("No videos found in psell-family bucket.");
-        return;
-      }
+        const START_CLIP = "ice-cup.mp4";
+        videos = videos.filter(v => v !== START_CLIP);
 
-      const START_CLIP = "ice-cup.mp4";
+        // Shuffle
+        for (let i = videos.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [videos[i], videos[j]] = [videos[j], videos[i]];
+        }
 
-      // Remove start clip from list (if present)
-      videos = videos.filter(v => v !== START_CLIP);
-
-      // Shuffle remaining videos
-      for (let i = videos.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [videos[i], videos[j]] = [videos[j], videos[i]];
-      }
-
-      // Build full URLs (start clip first)
-      const urls = [
-        `https://hptombstone2work.psell515.workers.dev/r2/${START_CLIP}?bucket=psell-family&token=my_subway`,
-        ...videos.map(
-          key =>
+        const urls = [
+          `https://hptombstone2work.psell515.workers.dev/r2/${START_CLIP}?bucket=psell-family&token=my_subway`,
+          ...videos.map(key =>
             `https://hptombstone2work.psell515.workers.dev/r2/${key}?bucket=psell-family&token=my_subway`
-        )
-      ];
+          )
+        ];
 
-      let index = 0;
+        let index = 0;
 
-      function playNext() {
-        video.src = urls[index];
-        video.play();
-        index = (index + 1) % urls.length;
+        function playNext() {
+          video.src = urls[index];
+          video.play();
+          counter.textContent = `${index + 1} / ${urls.length}`;
+          index = (index + 1) % urls.length;
+        }
+
+        video.addEventListener("ended", playNext);
+        playNext();
+
+      } catch (err) {
+        console.error("Error loading videos:", err);
       }
-
-      video.addEventListener("ended", playNext);
-
-      // Start with ice-cup.mp4
-      playNext();
-
-    } catch (err) {
-      console.error("Error loading videos:", err);
     }
-  }
 
-  loadVideos();
-</script>
+    loadVideos();
+  </script>
 
 </body>
 </html>
